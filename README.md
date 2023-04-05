@@ -93,7 +93,7 @@ optional arguments:
   -o OUTDIR, --output-to OUTDIR
                         Directory in which to create output files. Optional.
                         By default the output is written to a directory named
-                        'output' under the currrent working directory.
+                        'output' under the current working directory.
 ```
 
 ### Notes
