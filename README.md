@@ -63,15 +63,17 @@ The *Repositories by License* and *Repositories by Topic* Markdown text can also
 
 If you use the `--insert-into` parameter, the script looks for specific HTML **comment tags**, in the target file, that serve as *begin* and *end* markers for inserting the sections as shown below. The tags must be exactly as shown, including the underscores, and be on separate lines with no other text. If the tags are not found, then the document is not changed. Also, it is not necessary to use both sections.
 
+```html
 ...
 `<!-- Begin_Repositories_by_Topic -->`
-<small>(*Repositories by Topic* section inserted/replaced here)</small>
+  ('Repositories by Topic' section inserted/replaced here.)
 `<!-- End_Repositories_by_Topic -->`
 ...
 `<!-- Begin_Repositories_by_License -->`
-<small>(*Repositories by License* section inserted/replaced here)</small>
+  ('Repositories by License' section inserted/replaced here.)
 `<!-- End_Repositories_by_License -->`
 ...
+```
 
 **Command-Line Usage**
 
