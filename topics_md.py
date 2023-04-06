@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = "230405.1"
+APP_VERSION = "230406.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v.{APP_VERSION})"
@@ -206,14 +206,18 @@ def get_md_repos_by_topic(topics_data, repos_data):
     md.append(
         "*The list below was generated based on the Topics assigned to "
         "each public repository as of "
-        f"{run_dt.astimezone().strftime('%Y-%m-%d')}.*"
+        f"{run_dt.astimezone().strftime('%Y-%m-%d')}. "
+        "Any repository may be under multiple topics.*"
     )
     md.append("")
 
     for t, descr in topics_list:
         repos = get_repos_with_topic(t, topics_data, repos_pub)
         if repos:
-            md.append(f"<details>\n<summary>{descr}</summary>\n<ul>")
+            md.append(
+                f"<details>\n<summary>{descr} <sup>({len(repos)})"
+                "</sup></summary>\n<ul>"
+            )
 
             for repo in repos:
                 lic: str = repo.get("license_name")
