@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = '230405.1'
+APP_VERSION = '2023.12.1'
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v.{APP_VERSION})"
+app_title = f"{app_name} (v{APP_VERSION})"
 
 repos_csv = Path.cwd() / "data" / "github-repos.csv"
 
@@ -115,6 +115,8 @@ def write_csv_repos_pub(out_path, repos_pub, langs_data):
         "html_url",
         "prog_langs",
         "license_name",
+        "fork",
+        "fork_parent",
     ]
     with open(out_file, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
@@ -138,6 +140,8 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
         "md_link",
         "prog_langs",
         "license_name",
+        "fork",
+        "fork_parent",
     ]
     with open(out_file, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
@@ -151,6 +155,8 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
             row["md_link"] = md_link
             del row["full_name"]
             del row["html_url"]
+            del row["fork"]
+            del row["fork_parent"]
             writer.writerow(row)
 
 
@@ -164,6 +170,8 @@ def write_csv_repos_prv(out_path, repos_prv, langs_data):
         "html_url",
         "prog_langs",
         "license_name",
+        "fork",
+        "fork_parent",
     ]
     with open(out_file, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)

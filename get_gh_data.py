@@ -12,10 +12,10 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = "230405.1"
+APP_VERSION = "2023.12.1"
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v.{APP_VERSION})"
+app_title = f"{app_name} (v{APP_VERSION})"
 
 run_dt = datetime.now(timezone.utc)
 run_ts = run_dt.astimezone().strftime("%Y%m%d_%H%M%S")
@@ -95,6 +95,11 @@ def get_repos_data(g: Github):
         except UnknownObjectException:
             license_name = "(none)"
 
+        if repo.fork:
+            fork_parent = repo.parent.html_url
+        else:
+            fork_parent = ""
+
         repos.append(
             {
                 "name": repo.name,
@@ -103,6 +108,8 @@ def get_repos_data(g: Github):
                 "full_name": repo.full_name,
                 "html_url": repo.html_url,
                 "license_name": license_name,
+                "fork": repo.fork,
+                "fork_parent": fork_parent,
             }
         )
 
@@ -141,6 +148,8 @@ def write_repos_data(data_path: Path, repos: List[dict]):
             "full_name",
             "html_url",
             "license_name",
+            "fork",
+            "fork_parent",
         ]
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()

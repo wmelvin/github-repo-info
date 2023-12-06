@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = "230406.1"
+APP_VERSION = "2023.12.1"
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v.{APP_VERSION})"
+app_title = f"{app_name} (v{APP_VERSION})"
 
 repos_csv = Path.cwd() / "data" / "github-repos.csv"
 
@@ -220,12 +220,18 @@ def get_md_repos_by_topic(topics_data, repos_data):
             )
 
             for repo in repos:
+                is_fork: bool = repo.get("fork") == "True"
+                if is_fork:
+                    frk = "(fork) -"
+                else:
+                    frk = "-"
+
                 lic: str = repo.get("license_name")
                 lic = lic.replace("(none)", "")
                 if lic:
                     lic = f" ({lic})"
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
-                md.append(f"<li>{a} - {repo['description']}{lic}</li>")
+                md.append(f"<li>{a} {frk} {repo['description']}{lic}</li>")
 
             md.append("</ul>\n</details>")
 
@@ -281,9 +287,15 @@ def get_md_repos_by_license(repos_data):
     for license in licenses:
         md.append(f"<details>\n<summary>{license}</summary>\n<ul>")
         for repo in repos_pub:
+            is_fork: bool = repo.get("fork") == "True"
+            if is_fork:
+                frk = "(fork) -"
+            else:
+                frk = "-"
+
             if repo["license_name"] == license:
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
-                md.append(f"<li>{a} - {repo['description']}</li>")
+                md.append(f"<li>{a} {frk} {repo['description']}</li>")
         md.append("</ul>\n</details>")
 
     md.append("</details>")
