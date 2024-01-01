@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import csv
+import sys
 
 from pathlib import Path
 from typing import List
 
 
-APP_VERSION = '2023.12.1'
+APP_VERSION = '2024.01.1'
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -22,7 +23,7 @@ def get_repos_data():
     header = None
     data = []
     print(f"Reading '{repos_csv}'.")
-    with open(repos_csv) as f:
+    with repos_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -34,7 +35,7 @@ def get_langs_data():
     header = None
     data = []
     print(f"Reading '{langs_csv}'.")
-    with open(langs_csv) as f:
+    with langs_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -46,7 +47,7 @@ def get_topics_data():
     header = None
     data = []
     print(f"Reading '{topics_csv}'.")
-    with open(topics_csv) as f:
+    with topics_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -94,7 +95,7 @@ def get_langs_str(repo_langs: List[dict]) -> str:
     pct_sum = 0
     for lang in repo_langs:
         pct = round(lang["code_pct"], 1)
-        if 1 <= pct:
+        if pct >= 1:
             pct_sum += pct
             s += f"{lang['lang_name']} {pct}%, "
     if s:
@@ -118,7 +119,7 @@ def write_csv_repos_pub(out_path, repos_pub, langs_data):
         "fork",
         "fork_parent",
     ]
-    with open(out_file, "w", newline="") as f:
+    with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         for repo in repos_pub:
@@ -143,7 +144,7 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
         "fork",
         "fork_parent",
     ]
-    with open(out_file, "w", newline="") as f:
+    with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         for repo in repos_pub:
@@ -173,7 +174,7 @@ def write_csv_repos_prv(out_path, repos_prv, langs_data):
         "fork",
         "fork_parent",
     ]
-    with open(out_file, "w", newline="") as f:
+    with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         for repo in repos_prv:
@@ -202,7 +203,7 @@ def write_csv_langs(out_path, repos_data, langs_data):
         repo_langs = get_repo_langs(repo["name"], langs_data)
         for lang in repo_langs:
             lang_name = lang["lang_name"]
-            if lang_name not in stats.keys():
+            if lang_name not in stats:
                 stats[lang_name] = {
                     "public_count": 0,
                     "public_pct": 0,
@@ -227,7 +228,7 @@ def write_csv_langs(out_path, repos_data, langs_data):
         "private_pct",
     ]
 
-    with open(out_file, "w", newline="") as f:
+    with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         for pl, st in stats.items():
@@ -264,7 +265,7 @@ def write_csv_topics(out_path, repos_data, topics_data):
         "license_name",
     ]
 
-    with open(out_file, "w", newline="") as f:
+    with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         for row in rows:
@@ -279,7 +280,9 @@ def main():
     _, topics_data = get_topics_data()
 
     out_path = Path.cwd() / "output"
-    assert out_path.exists()
+    if not out_path.exists():
+        sys.stderr.write(f"\nERROR: Path not found: '{out_path}'\n")
+        sys.exit(1)
 
     repos_pub = get_public(repos_data)
     repos_prv = get_private(repos_data)

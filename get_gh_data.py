@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = "2023.12.1"
+APP_VERSION = "2024.01.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -66,7 +66,7 @@ def get_opts(argv) -> AppOptions:
 
 
 def get_key(key_file: Path) -> str:
-    with open(key_file) as f:
+    with key_file.open() as f:
         lines = f.readlines()
     for line in lines:
         s = line.strip()
@@ -95,10 +95,7 @@ def get_repos_data(g: Github):
         except UnknownObjectException:
             license_name = "(none)"
 
-        if repo.fork:
-            fork_parent = repo.parent.html_url
-        else:
-            fork_parent = ""
+        fork_parent = repo.parent.html_url if repo.fork else ""
 
         repos.append(
             {
@@ -140,7 +137,7 @@ def write_repos_data(data_path: Path, repos: List[dict]):
 
     print(f"Writing '{repos_csv}'.")
 
-    with open(repos_csv, "w", newline="") as f:
+    with repos_csv.open("w", newline="") as f:
         flds = [
             "name",
             "private",
@@ -166,7 +163,7 @@ def write_langs_data(data_path: Path, langs: List[dict]):
 
     print(f"Writing '{langs_csv}'.")
 
-    with open(langs_csv, "w", newline="") as f:
+    with langs_csv.open("w", newline="") as f:
         flds = ["repo_name", "lang_name", "code_bytes"]
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
@@ -182,7 +179,7 @@ def write_topics_data(data_path: Path, topics: List[dict]):
     topics_csv = data_path / run_ts / "github-topics.csv"
 
     print(f"Writing '{topics_csv}'.")
-    with open(topics_csv, "w", newline="") as f:
+    with topics_csv.open("w", newline="") as f:
         flds = ["repo_name", "topic"]
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
@@ -199,7 +196,7 @@ def write_session_data(data_path: Path):
 
     print(f"Writing '{session_csv}'.")
 
-    with open(session_csv, "w", newline="") as f:
+    with session_csv.open("w", newline="") as f:
         flds = ["run_date_time", "app_title"]
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()
@@ -220,7 +217,9 @@ def main(argv):
     opts = get_opts(argv)
 
     key = get_key(opts.key_file)
-    assert key is not None
+    if key is None:
+        sys.stderr.write(f"\nAccess key not found in '{opts.key_file}'\n")
+        sys.exit(1)
 
     g = Github(key)
     key = None

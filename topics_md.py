@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 
 
-APP_VERSION = "2023.12.1"
+APP_VERSION = "2024.01.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -68,8 +68,9 @@ def get_input_lower(prompt):
 
 
 def get_user_input(prompt, choices, default=None):
-    assert 0 < len(choices)
-    assert all([x == x.lower() for x in choices])
+    assert len(choices) > 0  # noqa: S101
+    assert all(x == x.lower() for x in choices)  # noqa: S101
+
     while True:
         answer = get_input_lower(prompt)
         if answer == "":
@@ -90,11 +91,11 @@ def get_opts(argv) -> AppOptions:
         outpath = Path(args.outdir).expanduser().resolve()
         if not outpath.exists():
             print(f"Directory does not exist: '{outpath}'")
-            if "y" == get_user_input(
+            if get_user_input(
                 "Would you like to create it?  Enter (Y)es or (n)o: ",
                 "y,n",
                 "y"
-            ):
+            ) == "y":
                 outpath.mkdir()
 
         if not outpath.exists():
@@ -124,7 +125,7 @@ def get_repos_data():
     header = None
     data = []
     print(f"Reading '{repos_csv}'.")
-    with open(repos_csv) as f:
+    with repos_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -136,7 +137,7 @@ def get_topics_data():
     header = None
     data = []
     print(f"Reading '{topics_csv}'.")
-    with open(topics_csv) as f:
+    with topics_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -148,7 +149,7 @@ def get_topics_altnames():
     header = None
     data = []
     print(f"Reading '{altnames_csv}'.")
-    with open(altnames_csv) as f:
+    with altnames_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         for row in reader:
@@ -221,10 +222,7 @@ def get_md_repos_by_topic(topics_data, repos_data):
 
             for repo in repos:
                 is_fork: bool = repo.get("fork") == "True"
-                if is_fork:
-                    frk = "(fork) -"
-                else:
-                    frk = "-"
+                frk = "(fork) -" if is_fork else "-"
 
                 lic: str = repo.get("license_name")
                 lic = lic.replace("(none)", "")
@@ -247,7 +245,7 @@ def write_md_repos_by_topic(out_path: Path, topics_data, repos_data):
     md = get_md_repos_by_topic(topics_data, repos_data)
     out_file = out_path / "repos-by-topic.md"
     print(f"Writing '{out_file}'.")
-    with open(out_file, "w") as f:
+    with out_file.open("w") as f:
         for line in md:
             f.write(f"{line}\n")
 
@@ -288,10 +286,7 @@ def get_md_repos_by_license(repos_data):
         md.append(f"<details>\n<summary>{license}</summary>\n<ul>")
         for repo in repos_pub:
             is_fork: bool = repo.get("fork") == "True"
-            if is_fork:
-                frk = "(fork) -"
-            else:
-                frk = "-"
+            frk = "(fork) -" if is_fork else "-"
 
             if repo["license_name"] == license:
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
@@ -310,7 +305,7 @@ def write_md_repos_by_license(out_path: Path, repos_data):
     md = get_md_repos_by_license(repos_data)
     out_file = out_path / "repos-by-license.md"
     print(f"Writing '{out_file}'.")
-    with open(out_file, "w") as f:
+    with out_file.open("w") as f:
         for line in md:
             f.write(f"{line}\n")
 
@@ -344,7 +339,8 @@ def replace_section(
         print(f"Cannot update section.\n{msg} ")
         return in_lines
 
-    assert begin_index < end_index
+    if begin_index > end_index:
+        raise ValueError("begin_index must be less than end_index")
 
     lines_before = in_lines[:begin_index + 1]
     lines_after = in_lines[end_index:]
@@ -356,10 +352,10 @@ def insert_sections(into_file: Path, topics_data, repos_data):
     if into_file is None:
         return
 
-    assert isinstance(into_file, Path)
+    assert isinstance(into_file, Path)  # noqa: S101
 
     print(f"Updating '{into_file}'.")
-    with open(into_file) as f:
+    with into_file.open() as f:
         lines = [s.rstrip() for s in f.readlines()]
 
     topics_md = get_md_repos_by_topic(topics_data, repos_data)
