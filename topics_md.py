@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import argparse
 import csv
 import sys
 
-from collections import namedtuple
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List
+from typing import NamedTuple
 
 
-APP_VERSION = "2024.01.1"
+APP_VERSION = "2024.01.2"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -23,9 +24,10 @@ altnames_csv = Path.cwd() / "input" / "topics_altnames.csv"
 
 run_dt = datetime.now(timezone.utc)
 
-AppOptions = namedtuple(
-    "AppOptions", "output_path, into_file"
-)
+
+class AppOptions(NamedTuple):
+    output_path: Path
+    into_file: Path | None
 
 
 def get_args(argv):
@@ -128,8 +130,7 @@ def get_repos_data():
     with repos_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
@@ -140,8 +141,7 @@ def get_topics_data():
     with topics_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
@@ -152,22 +152,17 @@ def get_topics_altnames():
     with altnames_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
 def get_public(repos):
-    result = []
-    for repo in repos:
-        if repo["private"] == "False":
-            result.append(repo)
-    return result
+    return [repo for repo in repos if repo["private"] == "False"]
 
 
 def get_repos_with_topic(
-    topic_name: str, topics: List[dict], repos: List[dict]
-) -> List[dict]:
+    topic_name: str, topics: list[dict], repos: list[dict]
+) -> list[dict]:
     result = []
     for topic in topics:
         if topic["topic"] == topic_name:
@@ -282,13 +277,13 @@ def get_md_repos_by_license(repos_data):
     md.append("- An infrastructure item (GitHub pages, or this README).")
     md.append("")
 
-    for license in licenses:
-        md.append(f"<details>\n<summary>{license}</summary>\n<ul>")
+    for lic in licenses:
+        md.append(f"<details>\n<summary>{lic}</summary>\n<ul>")
         for repo in repos_pub:
             is_fork: bool = repo.get("fork") == "True"
             frk = "(fork) -" if is_fork else "-"
 
-            if repo["license_name"] == license:
+            if repo["license_name"] == lic:
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
                 md.append(f"<li>{a} {frk} {repo['description']}</li>")
         md.append("</ul>\n</details>")
@@ -313,9 +308,9 @@ def write_md_repos_by_license(out_path: Path, repos_data):
 def replace_section(
     begin_tag: str,
     end_tag: str,
-    in_lines: List[str],
-    section_lines: List[str]
-) -> List[str]:
+    in_lines: list[str],
+    section_lines: list[str]
+) -> list[str]:
 
     begin_index = None
     end_index = None

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import csv
 import sys
 
 from pathlib import Path
-from typing import List
 
 
-APP_VERSION = '2024.01.1'
+APP_VERSION = '2024.01.2'
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -26,8 +27,7 @@ def get_repos_data():
     with repos_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
@@ -38,8 +38,7 @@ def get_langs_data():
     with langs_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
@@ -50,34 +49,22 @@ def get_topics_data():
     with topics_csv.open() as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        for row in reader:
-            data.append(row)
+        data = list(reader)
     return header, data
 
 
 def get_public(repos):
-    result = []
-    for repo in repos:
-        if repo["private"] == "False":
-            result.append(repo)
-    return result
+    return [repo for repo in repos if repo["private"] == "False"]
 
 
 def get_private(repos):
-    result = []
-    for repo in repos:
-        if repo["private"] == "True":
-            result.append(repo)
-    return result
+    return [repo for repo in repos if repo["private"] == "True"]
 
 
-def get_repo_langs(repo_name: str, langs_all: List[dict]) -> List[dict]:
+def get_repo_langs(repo_name: str, langs_all: list[dict]) -> list[dict]:
     result = []
 
-    repo_langs = []
-    for lang in langs_all:
-        if lang["repo_name"] == repo_name:
-            repo_langs.append(lang)
+    repo_langs = [lang for lang in langs_all if lang["repo_name"] == repo_name]
 
     total_bytes = sum(int(x["code_bytes"]) for x in repo_langs)
 
@@ -90,7 +77,7 @@ def get_repo_langs(repo_name: str, langs_all: List[dict]) -> List[dict]:
     return result
 
 
-def get_langs_str(repo_langs: List[dict]) -> str:
+def get_langs_str(repo_langs: list[dict]) -> str:
     s = ""
     pct_sum = 0
     for lang in repo_langs:

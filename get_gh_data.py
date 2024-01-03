@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
 import argparse
 import csv
 import shutil
 import sys
-
-from collections import namedtuple
 from datetime import datetime, timezone
-from github import Github, UnknownObjectException, BadCredentialsException
 from pathlib import Path
-from typing import List
+from typing import NamedTuple
 
+from github import BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2024.01.1"
+APP_VERSION = "2024.01.2"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -21,7 +20,9 @@ run_dt = datetime.now(timezone.utc)
 run_ts = run_dt.astimezone().strftime("%Y%m%d_%H%M%S")
 
 
-AppOptions = namedtuple("AppOptions", "key_file, data_path")
+class AppOptions(NamedTuple):
+    key_file: Path
+    data_path: Path
 
 
 def get_args(argv):
@@ -71,8 +72,7 @@ def get_key(key_file: Path) -> str:
     for line in lines:
         s = line.strip()
         if s.startswith("key") and "=" in s:
-            key = s.split("=")[1].strip().strip('"')
-            return key
+            return s.split("=")[1].strip().strip('"')
     return None
 
 
@@ -90,8 +90,8 @@ def get_repos_data(g: Github):
 
     for repo in g.get_user().get_repos("all"):
         try:
-            license = repo.get_license()
-            license_name = license.license.name
+            license_data = repo.get_license()
+            license_name = license_data.license.name
         except UnknownObjectException:
             license_name = "(none)"
 
@@ -122,17 +122,13 @@ def get_repos_data(g: Github):
 
         repo_topics = repo.get_topics()
         for topic in repo_topics:
-            topics.append(
-                {
-                    "repo_name": repo.name,
-                    "topic": topic,
-                }
-            )
+            topic_dict = {"repo_name": repo.name, "topic": topic}
+            topics.append(topic_dict)
 
     return repos, langs, topics
 
 
-def write_repos_data(data_path: Path, repos: List[dict]):
+def write_repos_data(data_path: Path, repos: list[dict]):
     repos_csv = data_path / run_ts / "github-repos.csv"
 
     print(f"Writing '{repos_csv}'.")
@@ -158,7 +154,7 @@ def write_repos_data(data_path: Path, repos: List[dict]):
     shutil.copyfile(repos_csv, repos_cp)
 
 
-def write_langs_data(data_path: Path, langs: List[dict]):
+def write_langs_data(data_path: Path, langs: list[dict]):
     langs_csv = data_path / run_ts / "github-langs.csv"
 
     print(f"Writing '{langs_csv}'.")
@@ -175,7 +171,7 @@ def write_langs_data(data_path: Path, langs: List[dict]):
     shutil.copyfile(langs_csv, langs_cp)
 
 
-def write_topics_data(data_path: Path, topics: List[dict]):
+def write_topics_data(data_path: Path, topics: list[dict]):
     topics_csv = data_path / run_ts / "github-topics.csv"
 
     print(f"Writing '{topics_csv}'.")
