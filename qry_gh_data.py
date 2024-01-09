@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import csv
 import sys
-
 from pathlib import Path
 
-
-APP_VERSION = '2024.01.2'
+APP_VERSION = "2024.01.2"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -86,7 +84,7 @@ def get_langs_str(repo_langs: list[dict]) -> str:
             pct_sum += pct
             s += f"{lang['lang_name']} {pct}%, "
     if s:
-        if pct_sum <= 99:
+        if pct_sum <= 99:  # noqa: PLR2004
             s += f"Other {round(100 - pct_sum, 1)}%"
         else:
             s = s[:-2]

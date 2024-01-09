@@ -5,11 +5,9 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
-
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
-
 
 APP_VERSION = "2024.01.2"
 
@@ -79,9 +77,9 @@ def get_user_input(prompt, choices, default=None):
             if default is not None:
                 answer = default
                 break
-        else:
-            if answer in choices:
-                break
+        elif answer in choices:
+            break
+
         print("Please select from the list of valid choices.")
     return answer
 
@@ -93,11 +91,12 @@ def get_opts(argv) -> AppOptions:
         outpath = Path(args.outdir).expanduser().resolve()
         if not outpath.exists():
             print(f"Directory does not exist: '{outpath}'")
-            if get_user_input(
-                "Would you like to create it?  Enter (Y)es or (n)o: ",
-                "y,n",
-                "y"
-            ) == "y":
+            if (
+                get_user_input(
+                    "Would you like to create it?  Enter (Y)es or (n)o: ", "y,n", "y"
+                )
+                == "y"
+            ):
                 outpath.mkdir()
 
         if not outpath.exists():
@@ -230,8 +229,7 @@ def get_md_repos_by_topic(topics_data, repos_data):
 
     md.append("</details>")
     md.append(
-        f"<!-- Generated {run_dt.strftime('%Y-%m-%d %H:%M %Z')} "
-        f"by {app_title} -->"
+        f"<!-- Generated {run_dt.strftime('%Y-%m-%d %H:%M %Z')} by {app_title} -->"
     )
     return md
 
@@ -266,10 +264,7 @@ def get_md_repos_by_license(repos_data):
     md.append("")
 
     md.append("Repositories with no license may be:")
-    md.append(
-        "- A work-in-progress, which may be given a license when more "
-        "complete."
-    )
+    md.append("- A work-in-progress, which may be given a license when more complete.")
     md.append(
         "- A demo or experiment, available for reference, but not usable as "
         "a library or application."
@@ -290,8 +285,7 @@ def get_md_repos_by_license(repos_data):
 
     md.append("</details>")
     md.append(
-        f"<!-- Generated {run_dt.strftime('%Y-%m-%d %H:%M %Z')} "
-        f"by {app_title} -->"
+        f"<!-- Generated {run_dt.strftime('%Y-%m-%d %H:%M %Z')} by {app_title} -->"
     )
     return md
 
@@ -306,12 +300,8 @@ def write_md_repos_by_license(out_path: Path, repos_data):
 
 
 def replace_section(
-    begin_tag: str,
-    end_tag: str,
-    in_lines: list[str],
-    section_lines: list[str]
+    begin_tag: str, end_tag: str, in_lines: list[str], section_lines: list[str]
 ) -> list[str]:
-
     begin_index = None
     end_index = None
 
@@ -337,7 +327,7 @@ def replace_section(
     if begin_index > end_index:
         raise ValueError("begin_index must be less than end_index")
 
-    lines_before = in_lines[:begin_index + 1]
+    lines_before = in_lines[: begin_index + 1]
     lines_after = in_lines[end_index:]
 
     return [] + lines_before + section_lines + lines_after
@@ -358,7 +348,7 @@ def insert_sections(into_file: Path, topics_data, repos_data):
         "<!-- Begin_Repositories_by_Topic -->",
         "<!-- End_Repositories_by_Topic -->",
         lines,
-        topics_md
+        topics_md,
     )
 
     license_md = get_md_repos_by_license(repos_data)
@@ -366,7 +356,7 @@ def insert_sections(into_file: Path, topics_data, repos_data):
         "<!-- Begin_Repositories_by_License -->",
         "<!-- End_Repositories_by_License -->",
         lines,
-        license_md
+        license_md,
     )
 
     into_file.write_text("\n".join(lines))

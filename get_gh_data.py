@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
+
 import argparse
 import csv
 import shutil
@@ -50,9 +51,7 @@ def get_opts(argv) -> AppOptions:
         key_file = Path(args.keyfile).expanduser().resolve()
     else:
         # TODO: Document default key-file path (or don't have one).
-        key_file = (
-            Path("~/KeepLocal/get_gh_data-settings.txt").expanduser().resolve()
-        )
+        key_file = Path("~/KeepLocal/get_gh_data-settings.txt").expanduser().resolve()
 
     if not key_file.exists():
         sys.stderr.write(f"\nERROR: Cannot find '{key_file}'.\n")
