@@ -193,6 +193,8 @@ def get_md_repos_by_topic(topics_data, repos_data):
                 break
         topics_list.append((t, alt_name))
 
+    topics_list.sort(key=lambda x: x[1].lower())
+
     md = []
 
     md.append("<details>")
