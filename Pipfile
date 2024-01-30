@@ -9,6 +9,3 @@ pygithub = "*"
 [dev-packages]
 rich = "*"
 ruff = "*"
-
-[requires]
-python_version = "3.12"
