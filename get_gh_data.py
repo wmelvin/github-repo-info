@@ -12,7 +12,7 @@ from typing import NamedTuple
 
 from github import BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2024.01.2"
+APP_VERSION = "2024.02.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -26,7 +26,7 @@ class AppOptions(NamedTuple):
     data_path: Path
 
 
-def get_args(argv):
+def get_args(arglist=None):
     ap = argparse.ArgumentParser(
         description="Queries the GitHub API for metadata about a user's "
         "repositories and saves it into CSV files."
@@ -41,11 +41,11 @@ def get_args(argv):
         "needed to query the API.",
     )
 
-    return ap.parse_args(argv[1:])
+    return ap.parse_args(arglist)
 
 
-def get_opts(argv) -> AppOptions:
-    args = get_args(argv)
+def get_opts(arglist=None) -> AppOptions:
+    args = get_args(arglist)
 
     if args.keyfile:
         key_file = Path(args.keyfile).expanduser().resolve()
@@ -206,10 +206,10 @@ def write_session_data(data_path: Path):
     shutil.copyfile(session_csv, session_cp)
 
 
-def main(argv):
+def main(arglist=None):
     print(f"\n{app_title}\n")
 
-    opts = get_opts(argv)
+    opts = get_opts(arglist)
 
     key = get_key(opts.key_file)
     if key is None:
@@ -243,4 +243,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main()

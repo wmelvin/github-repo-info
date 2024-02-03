@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-APP_VERSION = "2024.01.2"
+APP_VERSION = "2024.02.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -28,7 +28,7 @@ class AppOptions(NamedTuple):
     into_file: Path | None
 
 
-def get_args(argv):
+def get_args(arglist=None):
     ap = argparse.ArgumentParser(
         description="Reads GitHub repository metadata from CSV files saved "
         "by get_gh_data.py and writes Markdown files listing 'Repositories "
@@ -54,7 +54,7 @@ def get_args(argv):
         "under the currrent working directory.",
     )
 
-    return ap.parse_args(argv[1:])
+    return ap.parse_args(arglist)
 
 
 def get_input_lower(prompt):
@@ -84,8 +84,8 @@ def get_user_input(prompt, choices, default=None):
     return answer
 
 
-def get_opts(argv) -> AppOptions:
-    args = get_args(argv)
+def get_opts(arglist=None) -> AppOptions:
+    args = get_args(arglist)
 
     if args.outdir:
         outpath = Path(args.outdir).expanduser().resolve()
@@ -364,10 +364,10 @@ def insert_sections(into_file: Path, topics_data, repos_data):
     into_file.write_text("\n".join(lines))
 
 
-def main(argv):
+def main(arglist=None):
     print(f"\n{app_title}\n")
 
-    opts = get_opts(argv)
+    opts = get_opts(arglist)
 
     _, repos_data = get_repos_data()
     _, topics_data = get_topics_data()
@@ -382,4 +382,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    main()
