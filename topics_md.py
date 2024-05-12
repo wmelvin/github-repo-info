@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-APP_VERSION = "2024.02.1"
+APP_VERSION = "2024.05.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -126,7 +126,7 @@ def get_repos_data():
     header = None
     data = []
     print(f"Reading '{repos_csv}'.")
-    with repos_csv.open() as f:
+    with repos_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)
@@ -137,7 +137,7 @@ def get_topics_data():
     header = None
     data = []
     print(f"Reading '{topics_csv}'.")
-    with topics_csv.open() as f:
+    with topics_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)
@@ -148,7 +148,7 @@ def get_topics_altnames():
     header = None
     data = []
     print(f"Reading '{altnames_csv}'.")
-    with altnames_csv.open() as f:
+    with altnames_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)

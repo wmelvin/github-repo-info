@@ -6,7 +6,7 @@ import csv
 import sys
 from pathlib import Path
 
-APP_VERSION = "2024.01.2"
+APP_VERSION = "2024.05.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -22,7 +22,7 @@ def get_repos_data():
     header = None
     data = []
     print(f"Reading '{repos_csv}'.")
-    with repos_csv.open() as f:
+    with repos_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)
@@ -33,7 +33,7 @@ def get_langs_data():
     header = None
     data = []
     print(f"Reading '{langs_csv}'.")
-    with langs_csv.open() as f:
+    with langs_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)
@@ -44,7 +44,7 @@ def get_topics_data():
     header = None
     data = []
     print(f"Reading '{topics_csv}'.")
-    with topics_csv.open() as f:
+    with topics_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
         data = list(reader)
