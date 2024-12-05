@@ -10,9 +10,12 @@ This is a set of Python scripts for getting some repository metadata from the Gi
 
 ---
 
-### get_gh_data.py
+## get_gh_data.py
 
 This script uses the [PyGithub](https://pypi.org/project/PyGithub/) module to access the GitHub API.
+
+- [PyGithub documentation](https://pygithub.readthedocs.io/en/stable/index.html)
+- [PyGithub - Repository class](https://pygithub.readthedocs.io/en/stable/github_objects/Repository.html#repository)
 
 A [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) is required to use the GitHub API. You can provide the path to a file containing the token using the `--key-file` parameter. The file must be formatted as follows:
 
@@ -41,7 +44,7 @@ optional arguments:
 ```
 
 
-### qry_gh_data.py
+## qry_gh_data.py
 
 This script reads the *data* CSV files and writes the following CSV files to an `output` sub-directory:
 - `repos-langs.csv`
@@ -51,7 +54,7 @@ This script reads the *data* CSV files and writes the following CSV files to an 
 - `repos-topics.csv`
 
 
-### topics_md.py
+## topics_md.py
 
 This script reads the *data* CSV files and writes the following Markdown files to an `output` sub-directory:
 - `repos-by-license.md`
@@ -96,7 +99,7 @@ optional arguments:
                         'output' under the current working directory.
 ```
 
-### Notes
+## Notes
 
 If you are using *Visual Studio Code*, the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv) extension is very helpful for seeing the individual data fields when viewing CSV files in the editor. It's much quicker than opening the file in *Calc* or *Excel* when trying to spot the fields in plain text starts making your eyes cross.
 

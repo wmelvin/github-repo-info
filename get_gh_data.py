@@ -12,7 +12,7 @@ from typing import NamedTuple
 
 from github import BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2024.02.1"
+APP_VERSION = "2024.12.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -29,7 +29,7 @@ class AppOptions(NamedTuple):
 def get_args(arglist=None):
     ap = argparse.ArgumentParser(
         description="Queries the GitHub API for metadata about a user's "
-        "repositories and saves it into CSV files."
+        "repositories and saves it into CSV files.",
     )
 
     ap.add_argument(
@@ -106,6 +106,7 @@ def get_repos_data(g: Github):
                 "license_name": license_name,
                 "fork": repo.fork,
                 "fork_parent": fork_parent,
+                "archived": repo.archived,
             }
         )
 
@@ -142,6 +143,7 @@ def write_repos_data(data_path: Path, repos: list[dict]):
             "license_name",
             "fork",
             "fork_parent",
+            "archived",
         ]
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
         writer.writeheader()

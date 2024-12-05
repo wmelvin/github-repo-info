@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-APP_VERSION = "2024.05.1"
+APP_VERSION = "2024.12.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -218,14 +218,17 @@ def get_md_repos_by_topic(topics_data, repos_data):
 
             for repo in repos:
                 is_fork: bool = repo.get("fork") == "True"
-                frk = "(fork) -" if is_fork else "-"
+                frk = "(fork) " if is_fork else ""
+
+                is_archived: bool = repo.get("archived") == "True"
+                arc = "(archived) " if is_archived else ""
 
                 lic: str = repo.get("license_name")
                 lic = lic.replace("(none)", "")
                 if lic:
                     lic = f" ({lic})"
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
-                md.append(f"<li>{a} {frk} {repo['description']}{lic}</li>")
+                md.append(f"<li>{a} {arc}{frk}- {repo['description']}{lic}</li>")
 
             md.append("</ul>\n</details>")
 
@@ -278,11 +281,14 @@ def get_md_repos_by_license(repos_data):
         md.append(f"<details>\n<summary>{lic}</summary>\n<ul>")
         for repo in repos_pub:
             is_fork: bool = repo.get("fork") == "True"
-            frk = "(fork) -" if is_fork else "-"
+            frk = "(fork) " if is_fork else ""
+
+            is_archived: bool = repo.get("archived") == "True"
+            arc = "(archived) " if is_archived else ""
 
             if repo["license_name"] == lic:
                 a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
-                md.append(f"<li>{a} {frk} {repo['description']}</li>")
+                md.append(f"<li>{a} {arc}{frk}- {repo['description']}</li>")
         md.append("</ul>\n</details>")
 
     md.append("</details>")

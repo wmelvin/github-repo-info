@@ -6,7 +6,7 @@ import csv
 import sys
 from pathlib import Path
 
-APP_VERSION = "2024.05.1"
+APP_VERSION = "2024.12.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -103,6 +103,7 @@ def write_csv_repos_pub(out_path, repos_pub, langs_data):
         "license_name",
         "fork",
         "fork_parent",
+        "archived",
     ]
     with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
@@ -128,6 +129,7 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
         "license_name",
         "fork",
         "fork_parent",
+        "archived",
     ]
     with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
@@ -141,8 +143,6 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
             row["md_link"] = md_link
             del row["full_name"]
             del row["html_url"]
-            del row["fork"]
-            del row["fork_parent"]
             writer.writerow(row)
 
 
@@ -158,6 +158,7 @@ def write_csv_repos_prv(out_path, repos_prv, langs_data):
         "license_name",
         "fork",
         "fork_parent",
+        "archived",
     ]
     with out_file.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=flds, quoting=csv.QUOTE_ALL)
