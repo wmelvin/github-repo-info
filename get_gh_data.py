@@ -12,7 +12,7 @@ from typing import NamedTuple
 
 from github import BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2024.12.1"
+APP_VERSION = "2025.05.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"

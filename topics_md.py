@@ -212,8 +212,7 @@ def get_md_repos_by_topic(topics_data, repos_data):
         repos = get_repos_with_topic(t, topics_data, repos_pub)
         if repos:
             md.append(
-                f"<details>\n<summary>{descr} <sup>({len(repos)})"
-                "</sup></summary>\n<ul>"
+                f"<details>\n<summary>{descr} <sup>({len(repos)})</sup></summary>\n<ul>"
             )
 
             for repo in repos:

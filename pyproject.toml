@@ -1,3 +1,10 @@
+[project]
+name = "github-repo-info"
+version = "2025.05.1"
+requires-python = ">=3.9"
+dependencies = [
+    "pygithub>=2.6.1",
+]
 
 [tool.ruff]
 line-length = 88
@@ -23,3 +30,9 @@ select = [
     "W"     # Warning
 ]
 # extend-select = ["ALL"]
+
+[dependency-groups]
+dev = [
+    "rich>=14.0.0",
+    "ruff>=0.11.8",
+]
