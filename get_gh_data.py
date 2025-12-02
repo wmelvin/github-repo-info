@@ -10,9 +10,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-from github import BadCredentialsException, Github, UnknownObjectException
+from github import Auth, BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2025.05.1"
+APP_VERSION = "2025.12.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -218,8 +218,7 @@ def main(arglist=None):
         sys.stderr.write(f"\nAccess key not found in '{opts.key_file}'\n")
         sys.exit(1)
 
-    g = Github(key)
-    key = None
+    g = Github(auth=Auth.Token(key))
 
     try:
         print(f"Accessing '{g.get_user().html_url}'.")

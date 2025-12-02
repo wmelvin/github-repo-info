@@ -1,0 +1,10 @@
+.vscode/
+
+.venv/
+.ruff_cache/
+__pycache__/
+
+data/
+input/
+output/
+work/
