@@ -6,7 +6,7 @@ import csv
 import sys
 from pathlib import Path
 
-APP_VERSION = "2024.12.1"
+APP_VERSION = "2025.12.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
