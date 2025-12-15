@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-APP_VERSION = "2025.12.1"
+APP_VERSION = "2025.12.2"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} (v{APP_VERSION})"
@@ -216,30 +216,6 @@ def get_md_repos_by_topic(topics_data, repos_data):
     )
     md.append("")
 
-    #  List archived repositories separately becuase "archived" is an attribute,
-    #  not a topic.
-
-    repos_arc = get__public_archived(repos_data)
-    if repos_arc:
-
-        md.append(
-            f"<details>\n<summary>(Archived) <sup>({len(repos_arc)})</sup>"
-            "</summary>\n<ul>"
-        )
-
-        for repo in repos_arc:
-            is_fork: bool = repo.get("fork") == "True"
-            frk = "(fork) " if is_fork else ""
-
-            lic: str = repo.get("license_name")
-            lic = lic.replace("(none)", "")
-            if lic:
-                lic = f" ({lic})"
-            a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
-            md.append(f"<li>{a} {frk}- {repo['description']}{lic}</li>")
-
-        md.append("</ul>\n</details>")
-
     #  List repositories by Topic.
 
     for t, descr in topics_list:
@@ -265,7 +241,34 @@ def get_md_repos_by_topic(topics_data, repos_data):
 
             md.append("</ul>\n</details>")
 
+    #  List archived repositories separately becuase "archived" is an attribute,
+    #  not a topic.
+
+    repos_arc = get__public_archived(repos_data)
+    if repos_arc:
+
+        md.append(
+            f"<details>\n<summary>(Archived) <sup>({len(repos_arc)})</sup>"
+            "</summary>\n<ul>"
+        )
+
+        for repo in repos_arc:
+            is_fork: bool = repo.get("fork") == "True"
+            frk = "(fork) " if is_fork else ""
+
+            lic: str = repo.get("license_name")
+            lic = lic.replace("(none)", "")
+            if lic:
+                lic = f" ({lic})"
+            a = f'<a href="{repo["html_url"]}">{repo["name"]}</a>'
+            md.append(f"<li>{a} {frk}- {repo['description']}{lic}</li>")
+
+        md.append("</ul>\n</details>")
+
     md.append("</details>")
+
+    #  Footer comment.
+
     md.append(
         f"<!-- Generated {run_dt.strftime('%Y-%m-%d %H:%M %Z')} by {app_title} -->"
     )
