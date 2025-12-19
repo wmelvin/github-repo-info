@@ -12,10 +12,10 @@ from typing import NamedTuple
 
 from github import Auth, BadCredentialsException, Github, UnknownObjectException
 
-APP_VERSION = "2025.12.1"
+APP_VERSION = "2025.12.2"
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v{APP_VERSION})"
+app_title = f"{app_name} ({APP_VERSION})"
 
 run_dt = datetime.now(timezone.utc)
 run_ts = run_dt.astimezone().strftime("%Y%m%d_%H%M%S")
@@ -239,7 +239,7 @@ def main(arglist=None):
     write_topics_data(opts.data_path, topics)
     write_session_data(opts.data_path)
 
-    print("Done.")
+    print("\nDone.")
     return 0
 
 
