@@ -9,10 +9,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
-APP_VERSION = "2025.12.2"
+from rich import print as rprint
+
+#  Using calver variant 'YYYY.0M.0D.N' for application version.
+#  Update package version in pyproject.toml.
+APP_VERSION = "2025.12.26.1"
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v{APP_VERSION})"
+app_title = f"{app_name} ({APP_VERSION})"
 
 repos_csv = Path.cwd() / "data" / "github-repos.csv"
 
@@ -80,7 +84,7 @@ def get_user_input(prompt, choices, default=None):
         elif answer in choices:
             break
 
-        print("Please select from the list of valid choices.")
+        rprint("[bold]Please select from the list of valid choices.")
     return answer
 
 
@@ -90,7 +94,7 @@ def get_opts(arglist=None) -> AppOptions:
     if args.outdir:
         outpath = Path(args.outdir).expanduser().resolve()
         if not outpath.exists():
-            print(f"Directory does not exist: '{outpath}'")
+            rprint(f"[red]Directory does not exist: '{outpath}'")
             if (
                 get_user_input(
                     "Would you like to create it?  Enter (Y)es or (n)o: ", "y,n", "y"
@@ -125,7 +129,7 @@ def get_opts(arglist=None) -> AppOptions:
 def get_repos_data():
     header = None
     data = []
-    print(f"Reading '{repos_csv}'.")
+    rprint(f"Reading '{repos_csv}'.")
     with repos_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -136,7 +140,7 @@ def get_repos_data():
 def get_topics_data():
     header = None
     data = []
-    print(f"Reading '{topics_csv}'.")
+    rprint(f"Reading '{topics_csv}'.")
     with topics_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -147,7 +151,7 @@ def get_topics_data():
 def get_topics_altnames():
     header = None
     data = []
-    print(f"Reading '{altnames_csv}'.")
+    rprint(f"Reading '{altnames_csv}'.")
     with altnames_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -161,9 +165,9 @@ def get_public(repos):
 
 def get__public_archived(repos):
     return [
-        repo for repo in repos if (
-            repo["private"] == "False" and repo["archived"] == "True"
-        )
+        repo
+        for repo in repos
+        if (repo["private"] == "False" and repo["archived"] == "True")
     ]
 
 
@@ -246,7 +250,6 @@ def get_md_repos_by_topic(topics_data, repos_data):
 
     repos_arc = get__public_archived(repos_data)
     if repos_arc:
-
         md.append(
             f"<details>\n<summary>(Archived) <sup>({len(repos_arc)})</sup>"
             "</summary>\n<ul>"
@@ -278,7 +281,7 @@ def get_md_repos_by_topic(topics_data, repos_data):
 def write_md_repos_by_topic(out_path: Path, topics_data, repos_data):
     md = get_md_repos_by_topic(topics_data, repos_data)
     out_file = out_path / "repos-by-topic.md"
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
     with out_file.open("w") as f:
         for line in md:
             f.write(f"{line}\n")
@@ -337,7 +340,7 @@ def get_md_repos_by_license(repos_data):
 def write_md_repos_by_license(out_path: Path, repos_data):
     md = get_md_repos_by_license(repos_data)
     out_file = out_path / "repos-by-license.md"
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
     with out_file.open("w") as f:
         for line in md:
             f.write(f"{line}\n")
@@ -365,7 +368,7 @@ def replace_section(
 
     if errs:
         msg = "\n".join(errs)
-        print(f"Cannot update section.\n{msg} ")
+        rprint(f"[red]Cannot update section.\n{msg} ")
         return in_lines
 
     if begin_index > end_index:
@@ -383,7 +386,7 @@ def insert_sections(into_file: Path, topics_data, repos_data):
 
     assert isinstance(into_file, Path)  # noqa: S101
 
-    print(f"Updating '{into_file}'.")
+    rprint(f"Updating '{into_file}'.")
     with into_file.open() as f:
         lines = [s.rstrip() for s in f.readlines()]
 
@@ -419,6 +422,8 @@ def main(arglist=None):
     write_md_repos_by_license(opts.output_path, repos_data)
 
     insert_sections(opts.into_file, topics_data, repos_data)
+
+    rprint("\n[bright_green]Done.\n")
 
     return 0
 

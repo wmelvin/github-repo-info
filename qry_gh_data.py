@@ -6,10 +6,14 @@ import csv
 import sys
 from pathlib import Path
 
-APP_VERSION = "2025.12.1"
+from rich import print as rprint
+
+#  Using calver variant 'YYYY.0M.0D.N' for application version.
+#  Update package version in pyproject.toml.
+APP_VERSION = "2025.12.26.1"
 
 app_name = Path(__file__).name
-app_title = f"{app_name} (v{APP_VERSION})"
+app_title = f"{app_name} ({APP_VERSION})"
 
 repos_csv = Path.cwd() / "data" / "github-repos.csv"
 
@@ -21,7 +25,7 @@ topics_csv = Path.cwd() / "data" / "github-topics.csv"
 def get_repos_data():
     header = None
     data = []
-    print(f"Reading '{repos_csv}'.")
+    rprint(f"Reading '{repos_csv}'.")
     with repos_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -32,7 +36,7 @@ def get_repos_data():
 def get_langs_data():
     header = None
     data = []
-    print(f"Reading '{langs_csv}'.")
+    rprint(f"Reading '{langs_csv}'.")
     with langs_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -43,7 +47,7 @@ def get_langs_data():
 def get_topics_data():
     header = None
     data = []
-    print(f"Reading '{topics_csv}'.")
+    rprint(f"Reading '{topics_csv}'.")
     with topics_csv.open(newline="") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
@@ -93,7 +97,7 @@ def get_langs_str(repo_langs: list[dict]) -> str:
 
 def write_csv_repos_pub(out_path, repos_pub, langs_data):
     out_file = out_path / "repos-public.csv"
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
     flds = [
         "name",
         "private",
@@ -119,7 +123,7 @@ def write_csv_repos_pub(out_path, repos_pub, langs_data):
 
 def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
     out_file = out_path / "repos-public-md.csv"
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
     flds = [
         "name",
         "private",
@@ -148,7 +152,7 @@ def write_csv_repos_pub_md(out_path, repos_pub, langs_data):
 
 def write_csv_repos_prv(out_path, repos_prv, langs_data):
     out_file = out_path / "repos-private.csv"
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
     flds = [
         "name",
         "private",
@@ -204,7 +208,7 @@ def write_csv_langs(out_path, repos_data, langs_data):
                 stats[lang_name]["private_count"] += 1
                 stats[lang_name]["private_pct"] += code_pct / total_pct_prv
 
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
 
     flds = [
         "prog_lang",
@@ -243,7 +247,7 @@ def write_csv_topics(out_path, repos_data, topics_data):
 
     out_file = out_path / "repos-topics.csv"
 
-    print(f"Writing '{out_file}'.")
+    rprint(f"Writing '{out_file}'.")
 
     flds = [
         "repo_name",
@@ -282,6 +286,8 @@ def main():
     write_csv_langs(out_path, repos_data, langs_data)
 
     write_csv_topics(out_path, repos_data, topics_data)
+
+    rprint("\n[bright_green]Done.\n")
 
 
 if __name__ == "__main__":
