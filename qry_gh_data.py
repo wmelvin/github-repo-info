@@ -10,7 +10,7 @@ from rich import print as rprint
 
 #  Using calver variant 'YYYY.0M.0D.N' for application version.
 #  Update package version in pyproject.toml.
-APP_VERSION = "2025.12.26.1"
+APP_VERSION = "2026.05.15.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} ({APP_VERSION})"
@@ -66,7 +66,12 @@ def get_private(repos):
 def get_repo_langs(repo_name: str, langs_all: list[dict]) -> list[dict]:
     result = []
 
-    repo_langs = [lang for lang in langs_all if lang["repo_name"] == repo_name]
+    # 2026-05-15: If lang_name is "url" then code_bytes is a url, not a number.
+    repo_langs = [
+        lang
+        for lang in langs_all
+        if lang["repo_name"] == repo_name and lang["lang_name"] != "url"
+    ]
 
     total_bytes = sum(int(x["code_bytes"]) for x in repo_langs)
 

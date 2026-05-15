@@ -15,7 +15,7 @@ from rich import print as rprint
 
 #  Using calver variant 'YYYY.0M.0D.N' for application version.
 #  Update package version in pyproject.toml.
-APP_VERSION = "2026.03.15.1"
+APP_VERSION = "2026.05.15.1"
 
 app_name = Path(__file__).name
 app_title = f"{app_name} ({APP_VERSION})"
