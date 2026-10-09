@@ -2,9 +2,9 @@
 name = "github-repo-info"
 
 #  Using calver 'YYYY.0M.MICRO' for package version.
-version = "2026.08.1"
+version = "2026.10.1"
 
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "PyGithub>=2.6.1",
     "rich>=14.2.0",
